@@ -338,53 +338,50 @@ primary key(VenueID)
 
 
 
+✔
+DROP TRIGGER IF EXISTS CheckConsertdata;  
+DELIMITER $
 
-drop trigger if exists CheckConsertdata;  ✔
-delimiter $
+CREATE TRIGGER CheckConsertdata BEFORE INSERT ON consert
+FOR EACH ROW
+BEGIN
 
-create trigger CheckConserDate before insert on consert
-for each row
-begin
+    IF new.ConsertDate < DATE_ADD(CURDATE(), INTERVAL 5 DAY) THEN 
+        SIGNAL SQLSTATE '45000' 
+        SET MESSAGE_TEXT = 'Consert must be scheduled at least 5 days before the concert';
+    END IF;
 
-if new.ConsertDate < DATE_ADD(CURDATE(), INTERVAL 5 DAY) then 
-SIGNAL SQLSTATE '45000' 
-SET MESSAGE_TEXT = ' Consert must be scheduled at least 5 days before the concert ';
-end if;
-
-
-if (select count(*) from consert where status = 'Scheduled'and ArtistID = new.ArtistID) >=3 then
-SIGNAL SQLSTATE '45000' 
-SET MESSAGE_TEXT = ' Artist can have at most 3 scheduled conserts ';
-
-end if;
+    IF (SELECT COUNT(*) FROM consert WHERE status = 'Scheduled' AND ArtistID = new.ArtistID) >= 3 THEN
+        SIGNAL SQLSTATE '45000' 
+        SET MESSAGE_TEXT = 'Artist can have at most 3 scheduled conserts';
+    END IF;
 
 END $
-
 
 DELIMITER ;
 
 
 
+✔
+DROP TRIGGER IF EXISTS CheckCancellation; 
+DELIMITER $
 
-drop trigger if exists CheckCancellation; ✔
-delimiter $
+CREATE TRIGGER CheckCancellation BEFORE UPDATE ON consert
+FOR EACH ROW
+BEGIN
 
-create trigger CheckCancellation before update on consert
-for each row
-begin
+    IF (SELECT COUNT(*) FROM consert WHERE new.status = 'Scheduled' AND old.status = 'Cancelled' AND ArtistID = new.ArtistID) >= 3 THEN
+        SIGNAL SQLSTATE '45000' 
+        SET MESSAGE_TEXT = 'Artist can have at most 3 scheduled conserts';
+    END IF;
 
+    IF new.status = 'Cancelled' AND old.status = 'Scheduled' AND new.ConsertDate < DATE_ADD(CURDATE(), INTERVAL 3 DAY) THEN
+        SIGNAL SQLSTATE '45000' 
+        SET MESSAGE_TEXT = 'Consert cannot be cancelled';
+    END IF;
 
-if (select count(*) from consert where new.status = 'Scheduled' and old.status='Cancelled' and ArtistID = new.ArtistID) >=3 then
-SIGNAL SQLSTATE '45000' 
-SET MESSAGE_TEXT = ' Artist can have at most 3 scheduled conserts ';
-end if;
-
-if  new.status='Cancelled' and old.status = 'Scheduled' and new.ConsertDate < DATE_ADD(CURDATE(), INTERVAL 3 DAY)
-then 
-SIGNAL SQLSTATE '45000' 
-SET MESSAGE_TEXT = 'Consert cannot be cancelled';
-end if;
 END $
+
 DELIMITER ;
 
 
@@ -397,29 +394,26 @@ DELIMITER ;
 
 3.1.3.1 ✔
 
-drop procedure if exists getscore;
+DROP PROCEDURE IF EXISTS getscore;
 DELIMITER $
 
-CREATE PROCEDURE getscore(IN venID INT)
+CREATE PROCEDURE getscore(IN venID INT, OUT res INT)
 BEGIN
 
-declare capacity int;
-declare result int;
-declare compl int;
-declare years_active int;
-set result =0;
+    DECLARE capacity INT;
+    DECLARE compl INT;
+    DECLARE years_active INT;
 
-select venue.Capacity, venue.CompletedConserts, TIMESTAMPDIFF(YEAR, FromDate, CURDATE())
-into capacity, compl, years_active
-from venue where VenueID = venID;
+    SELECT venue.Capacity, venue.CompletedConserts, TIMESTAMPDIFF(YEAR, FromDate, CURDATE())
+    INTO capacity, compl, years_active
+    FROM venue
+    WHERE VenueID = venID;
 
-set result=(( capacity / 1000) * 1) + (( compl / 100)*3 ) + ( years_active*2);
-select result;
+    SET res = ((capacity / 1000) * 1) + ((compl / 100) * 3) + (years_active * 2);
+
 END $
 
 DELIMITER ;
-
-
 
 
 
@@ -431,72 +425,66 @@ DELIMITER ;
 
 3.1.3.2  ✔
 
-drop procedure if exists PlanConsert;
+DROP PROCEDURE IF EXISTS PlanConsert;
 DELIMITER $
 
-CREATE PROCEDURE PlanConsert(IN artistID INT, in Date date , in choice char)
+CREATE PROCEDURE PlanConsert(IN artistID INT, IN Date DATE, IN choice CHAR)
 BEGIN
 
+    IF choice = 'i' THEN
 
-
-if choice ='i' then
-
-if (select count(*) from consert where status = 'Scheduled' and consert.ArtistID = artistID) >=1 then
-SIGNAL SQLSTATE '45000' 
-SET MESSAGE_TEXT = ' Artist already has scheduled consert ';
-
-elseif (select count(*) from consert where status = 'Cancelled' and consert.ArtistID = artistID) >=1 then
-SIGNAL SQLSTATE '45000' 
-SET MESSAGE_TEXT = ' Artist already has cancelled consert ';
-
-else
-insert into consert(status, ConsertDate,ArtistID) values ('Scheduled',Date,artistID);
-select '  Consert scheduled ' as Message;
-end if;
-
+        IF (SELECT COUNT(*) FROM consert WHERE status = 'Scheduled' AND consert.ArtistID = artistID) >= 1 THEN
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Artist already has scheduled consert';
+        
+        ELSEIF (SELECT COUNT(*) FROM consert WHERE status = 'Cancelled' AND consert.ArtistID = artistID) >= 1 THEN
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Artist already has cancelled consert';
+        
+        ELSE
+            INSERT INTO consert(status, ConsertDate, ArtistID) VALUES ('Scheduled', Date, artistID);
+            SELECT 'Consert scheduled' AS Message;
+        END IF;
 
 
 
+    ELSEIF choice = 'c' THEN
 
-elseif choice ='c' then
-
-if (select count(*) from consert where status = 'Scheduled' and consert.ArtistID = artistID and consertDate = Date ) >=1 then
-update consert set status='Cancelled' where status = 'Scheduled' and consert.ArtistID = artistID and consertDate = Date; 
-select ' Consert cancelled ' as Message;
-
-elseif (select count(*) from consert where status = 'Cancelled' and consert.ArtistID = artistID and consertDate = Date ) >=1 then
-SIGNAL SQLSTATE '45000' 
-SET MESSAGE_TEXT = ' Consert already cancelled ';
-
-else 
-SIGNAL SQLSTATE '45000' 
-SET MESSAGE_TEXT = ' Scheduled consert does not exist ';
-end if;
-
+        IF (SELECT COUNT(*) FROM consert WHERE status = 'Scheduled' AND consert.ArtistID = artistID AND consertDate = Date) >= 1 THEN
+            UPDATE consert SET status = 'Cancelled' WHERE status = 'Scheduled' AND consert.ArtistID = artistID AND consertDate = Date;
+            SELECT 'Consert cancelled' AS Message;
+        
+        ELSEIF (SELECT COUNT(*) FROM consert WHERE status = 'Cancelled' AND consert.ArtistID = artistID AND consertDate = Date) >= 1 THEN
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Consert already cancelled';
+        
+        ELSE
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Scheduled consert does not exist';
+        END IF;
 
 
 
+    ELSEIF choice = 'a' THEN
 
-elseif choice ='a' then
-if (select count(*) from consert where status = 'Cancelled' and consert.ArtistID = artistID and consertDate = Date ) >=1 then 
-update consert set status='Scheduled' where status = 'Cancelled' and consert.ArtistID = artistID and consertDate = Date;
-select ' cancelled Consert set to scheduled  ' as Message;
+        IF (SELECT COUNT(*) FROM consert WHERE status = 'Cancelled' AND consert.ArtistID = artistID AND consertDate = Date) >= 1 THEN
+            UPDATE consert SET status = 'Scheduled' WHERE status = 'Cancelled' AND consert.ArtistID = artistID AND consertDate = Date;
+            SELECT 'Cancelled Consert set to scheduled' AS Message;
+        
+        ELSEIF (SELECT COUNT(*) FROM consert WHERE status = 'Scheduled' AND consert.ArtistID = artistID AND consertDate = Date) >= 1 THEN
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Consert already scheduled';
+        
+        ELSE
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Cancelled consert does not exist';
+        END IF;
 
-elseif (select count(*) from consert where status = 'Scheduled' and consert.ArtistID = artistID and consertDate = Date ) >=1 then 
-SIGNAL SQLSTATE '45000' 
-SET MESSAGE_TEXT = ' consert already scheduled  ';
+    END IF;
 
-else 
-SIGNAL SQLSTATE '45000' 
-SET MESSAGE_TEXT = ' Cancelled consert does not exist ';
-end if;
-
-
-end if;
 END $
 
 DELIMITER ;
-
 
 
 
@@ -506,24 +494,76 @@ DELIMITER ;
 3.1.3.3.
 
 
-drop procedure if exists GetVenueData;
+DROP PROCEDURE IF EXISTS GetVenueData;
 DELIMITER $
 
-CREATE PROCEDURE GetVenueData(IN conID INT, in req_cap int, out ven_id int, out ven_cap int)
+CREATE PROCEDURE GetVenueData(IN conID INT, IN req_cap INT, OUT ven_id INT, OUT ven_cap INT)
 BEGIN
 
-if ((select count(*) from consert where status = 'Cancelled' and consert.ConsertID = conID ) >= 1) or 
-((select count(*) from consert where status != 'Cancelled' and consert.ConsertID = conID ) < 1)
- then 
-set ven_id = null;
-set ven_cap = 0;
-select ven_id as Venue_ID, ven_cap as Venue_Capacity;
+    DECLARE venueExists INT;
+    DECLARE highestScore INT DEFAULT 0;
+    DECLARE bestVenID INT DEFAULT NULL;
+    DECLARE bestVenCap INT DEFAULT 0;
+    DECLARE venueScore INT;
+    DECLARE ven_id_temp INT;
+    DECLARE ven_cap_temp INT;
+
+    DECLARE done INT DEFAULT 0;
+    DECLARE foundVenues CURSOR FOR 
+        SELECT venue.VenueID, venue.Capacity
+        FROM venue
+        WHERE venue.Capacity >= req_cap * 1.10 AND venue.IsFree = TRUE;
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
 
 
+    IF (SELECT COUNT(*) FROM consert WHERE consert.ConsertID = conID AND consert.status = 'Cancelled') > 0 OR
+       (SELECT COUNT(*) FROM consert WHERE consert.ConsertID = conID) < 1 THEN
+        SET ven_id = NULL;
+        SET ven_cap = 0;
+    ELSE
 
-end if;
+        SELECT COUNT(*) INTO venueExists
+        FROM consert
+        WHERE consert.ConsertID = conID AND consert.VenueID IS NOT NULL AND consert.status != 'Cancelled';
 
+        IF venueExists = 1 THEN
+
+            SELECT venue.VenueID, venue.Capacity
+            INTO ven_id, ven_cap
+            FROM consert
+            INNER JOIN venue ON consert.VenueID = venue.VenueID
+            WHERE consert.ConsertID = conID;
+        ELSE
+
+            OPEN foundVenues;
+
+
+            FETCH foundVenues INTO ven_id_temp, ven_cap_temp;
+
+
+            WHILE done = 0 DO
+
+                CALL getscore(ven_id_temp, venueScore);
+
+
+                IF venueScore > highestScore THEN
+                    SET highestScore = venueScore;
+                    SET bestVenID = ven_id_temp;
+                    SET bestVenCap = ven_cap_temp;
+                END IF;
+
+                FETCH foundVenues INTO ven_id_temp, ven_cap_temp;
+            END WHILE;
+
+            CLOSE foundVenues;
+
+            SET ven_id = bestVenID;
+            SET ven_cap = bestVenCap;
+        END IF;
+    END IF;
+
+
+    SELECT ven_id AS Venue_ID, ven_cap AS Venue_Capacity;
 END $
-
 DELIMITER ;
-
