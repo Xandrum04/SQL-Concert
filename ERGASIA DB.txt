@@ -716,5 +716,198 @@ INSERT INTO DBA (name, start_date) VALUES
 ('Jane Smith', '2023-03-15'),
 ('Alice Johnson', '2023-06-01');
 
+3.1.4.1.
+
+CREATE TABLE action_log (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    action_type VARCHAR(10),   
+    table_name VARCHAR(50),    
+    action_timestamp DATETIME, 
+    username VARCHAR(50)       
+);
+
+
+
+
+DROP TRIGGER IF EXISTS person_insert;
+DELIMITER $
+CREATE TRIGGER person_insert AFTER INSERT ON person
+FOR EACH ROW
+BEGIN
+    INSERT INTO action_log (action_type, table_name, action_timestamp, username)
+    VALUES ('INSERT', 'person', NOW(), USER());
+END;
+$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS person_update;
+DELIMITER $
+CREATE TRIGGER person_update AFTER UPDATE ON person
+FOR EACH ROW
+BEGIN
+    INSERT INTO action_log (action_type, table_name, action_timestamp, username)
+    VALUES ('UPDATE', 'person', NOW(), USER());
+END;
+$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS person_delete;
+DELIMITER $
+CREATE TRIGGER person_delete AFTER DELETE ON person
+FOR EACH ROW
+BEGIN
+    INSERT INTO action_log (action_type, table_name, action_timestamp, username)
+    VALUES ('DELETE', 'person', NOW(), USER());
+END$
+DELIMITER ;
+ 
+
+
+
+
+
+DROP TRIGGER IF EXISTS band_insert;
+DELIMITER $
+CREATE TRIGGER band_insert AFTER INSERT ON band
+FOR EACH ROW
+BEGIN
+    INSERT INTO action_log (action_type, table_name, action_timestamp, username)
+    VALUES ('INSERT', 'band', NOW(), USER());
+END;
+$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS band_update;
+DELIMITER $
+CREATE TRIGGER band_update AFTER UPDATE ON band
+FOR EACH ROW
+BEGIN
+    INSERT INTO action_log (action_type, table_name, action_timestamp, username)
+    VALUES ('UPDATE', 'band', NOW(), USER());
+END;
+$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS band_delete;
+DELIMITER $
+CREATE TRIGGER band_delete AFTER DELETE ON band
+FOR EACH ROW
+BEGIN
+    INSERT INTO action_log (action_type, table_name, action_timestamp, username)
+    VALUES ('DELETE', 'band', NOW(), USER());
+END$
+DELIMITER ;
+
+
+
+DROP TRIGGER IF EXISTS album_insert;
+DELIMITER $
+CREATE TRIGGER album_insert AFTER INSERT ON album
+FOR EACH ROW
+BEGIN
+    INSERT INTO action_log (action_type, table_name, action_timestamp, username)
+    VALUES ('INSERT', 'album', NOW(), USER());
+END;
+$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS album_update;
+DELIMITER $
+CREATE TRIGGER album_update AFTER UPDATE ON album
+FOR EACH ROW
+BEGIN
+    INSERT INTO action_log (action_type, table_name, action_timestamp, username)
+    VALUES ('UPDATE', 'album', NOW(), USER());
+END;
+$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS album_delete;
+DELIMITER $
+CREATE TRIGGER album_delete AFTER DELETE ON album
+FOR EACH ROW
+BEGIN
+    INSERT INTO action_log (action_type, table_name, action_timestamp, username)
+    VALUES ('DELETE', 'album', NOW(), USER());
+END$
+DELIMITER ;
+
+
+
+
+
+
+DROP TRIGGER IF EXISTS concert_insert;
+DELIMITER $
+CREATE TRIGGER concert_insert AFTER INSERT ON consert
+FOR EACH ROW
+BEGIN
+    INSERT INTO action_log (action_type, table_name, action_timestamp, username)
+    VALUES ('INSERT', 'concert', NOW(), USER());
+END;
+$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS concert_update;
+DELIMITER $
+CREATE TRIGGER concert_update AFTER UPDATE ON consert
+FOR EACH ROW
+BEGIN
+    INSERT INTO action_log (action_type, table_name, action_timestamp, username)
+    VALUES ('UPDATE', 'concert', NOW(), USER());
+END;
+$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS concert_delete;
+DELIMITER $
+CREATE TRIGGER concert_delete AFTER DELETE ON consert
+FOR EACH ROW
+BEGIN
+    INSERT INTO action_log (action_type, table_name, action_timestamp, username)
+    VALUES ('DELETE', 'concert', NOW(), USER());
+END;
+$
+DELIMITER ;
+
+
+
+
+DROP TRIGGER IF EXISTS venue_insert;
+DELIMITER $
+CREATE TRIGGER venue_insert AFTER INSERT ON venue
+FOR EACH ROW
+BEGIN
+    INSERT INTO action_log (action_type, table_name, action_timestamp, username)
+    VALUES ('INSERT', 'venue', NOW(), USER());
+END;
+$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS venue_update;
+DELIMITER $
+CREATE TRIGGER venue_update AFTER UPDATE ON venue
+FOR EACH ROW
+BEGIN
+    INSERT INTO action_log (action_type, table_name, action_timestamp, username)
+    VALUES ('UPDATE', 'venue', NOW(), USER());
+END;
+$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS venue_delete;
+DELIMITER $
+CREATE TRIGGER venue_delete AFTER DELETE ON venue
+FOR EACH ROW
+BEGIN
+    INSERT INTO action_log (action_type, table_name, action_timestamp, username)
+    VALUES ('DELETE', 'venue', NOW(), USER());
+END;
+$
+DELIMITER ;
+
+
+
+
 
 
