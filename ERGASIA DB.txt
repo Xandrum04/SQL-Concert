@@ -1,0 +1,529 @@
+C:\wamp64\bin\mysql\mysql8.3.0\bin\mysql.exe -u root -p --default-character-set=Greek
+
+create table person(
+PersonID int(11) not null auto_increment,
+FirstName varchar(50) not null,
+LastName varchar(80) not null,
+Birthdate date not null,
+Country varchar(50) not null,
+Alias varchar(50),
+isSoloArtist tinyint(4) not null,
+ArtistID int(11) not null,
+primary key(PersonID),
+constraint isartist
+foreign key(ArtistID) references artist(ArtistID)
+on delete cascade on update cascade);
+
+
+create table bandmember(
+BandID int(11) not null,
+PersonID int(11) not null,
+FromDate date not null,
+ToDate date,
+primary key(BandID,PersonID),
+unique(FromDate),
+constraint ismember
+foreign key(PersonID) references person(PersonID)
+on delete cascade on update cascade,
+constraint fromband
+foreign key(BandID) references band(BandID)
+on delete cascade on update cascade);
+
+
+create table band(
+BandID int(11) not null auto_increment,
+BandName varchar(50) not null,
+FormationDate date not null,
+DisbandDate date,
+ArtistID int(11) not null,
+primary key(BandID),
+constraint isartist
+foreign key(ArtistID) references artist(ArtistID)
+on delete cascade on update cascade);
+
+
+create table genre(
+GenreID int(11) not null auto_increment,
+GenreName varchar(30) not null,
+primary key(GenreID));
+
+
+create table artist(
+ArtistID int(11) not null auto_increment,
+ArtistType enum('PERSON','BAND','ORCHESTRA','CHOIR','VIRTUAL','OTHER') not null,
+primary key(ArtistID));
+
+
+create table albumrelease(
+ReleaseID int(11) not null auto_increment,
+AlbumID int(11) not null,
+ReleaseDate date not null,
+ReleaseType enum('LP','CD','MP3') not null,
+ReleaseStatus enum('OFFICIAL','PROMOTION','BOOTLEG','WITHDRAWN','CANCELED') not null,
+Packaging enum ('BOOK','CARDBOARD SLEEVE','DIGIPAK','JEWEL CASE','NA') not null,
+primary key(ReleaseID),
+constraint isalbum
+foreign key(AlbumID) references album(AlbumID)
+on delete cascade on update cascade);
+
+
+
+create table artistcompany(
+ArtistID int(11) not null,
+CompanyID int(11) not null,
+FromDate date not null,
+ToDate date,
+primary key(ArtistID,CompanyID),
+unique(FromDate),
+constraint isartist
+foreign key(ArtistID) references artist(ArtistID)
+on delete cascade on update cascade,
+constraint iscompany
+foreign key(CompanyID) references recordcompany(CompanyID)
+on delete cascade on update cascade);
+
+
+
+
+create table recordcompany(
+CompanyID int(11) not null auto_increment,
+CompanyName varchar(80) not null,
+Address varchar(150) not null,
+Phone varchar(20) not null,
+Email varchar(40) not null,
+BeginDate date not null,
+EndDate date,
+primary key(CompanyID));
+
+
+create table album(
+AlbumID int(11) not null auto_increment,
+Title varchar(100) not null,
+ArtistID int(11) not null,
+GenreID int(11) not null,
+CompanyID int(11) not null,
+ProducerID int(11) not null,
+primary key(AlbumID),
+unique(Title),
+constraint fromartist
+foreign key(ArtistID) references artist(ArtistID)
+on delete cascade on update cascade,
+constraint isgenre
+foreign key(GenreID) references genre(GenreID)
+on delete cascade on update cascade,
+constraint isartist
+foreign key(CompanyID) references recordcompany(CompanyID)
+on delete cascade on update cascade,
+constraint produced
+foreign key(ProducerID) references producer(ProducerID)
+on delete cascade on update cascade);
+
+
+create table producercompany(
+ProducerID int(11) not null,
+RecordCompanyID int(11) not null,
+FromDate date not null,
+ToDate date,
+primary key(ProducerID,RecordCompanyID),
+unique(FromDate),
+constraint isproducer
+foreign key(ProducerID) references producer(ProducerID)
+on delete cascade on update cascade,
+constraint reccompany
+foreign key(RecordCompanyID) references recordcompany(RecordCompanyID)
+on delete cascade on update cascade);
+
+
+
+
+create table producer(
+ProducerID int(11) not null auto_increment,
+FirstName varchar(50) not null,
+LastName varchar(80) not null,
+NumofProdAlbums int(11) not null,
+primary key(ProducerID));
+
+
+
+create table track(
+TrackID int(11) not null auto_increment,
+Title varchar(100) not null,
+AlbumID int(11) not null,
+TrackLength time not null,
+TrackNo int(11) not null,
+Lyrics text,
+primary key(TrackID),
+constraint fromalbum
+foreign key(AlbumID) references album(AlbumID)
+on delete cascade on update cascade);
+
+
+
+insert into artist(ArtistType) values
+('PERSON'),
+('PERSON'),
+('BAND'),
+('CHOIR'),
+('ORCHESTRA'),
+('OTHER'),
+('PERSON'),
+('BAND'),
+('BAND'),
+('VIRTUAL');
+
+
+insert into person(FirstName,LastName,BirthDate,Country,Alias,isSoloArtist,ArtistID) values
+('James','Woods','1995-07-24','USA',null,1,1),
+('Michael','Stevens','1980-11-05','Canada','Macklemore',1,2),
+('Elizabeth','Owens','1983-04-14','UK',null,0,3),
+('Howard','Nelson','1979-03-14','Mexico',null,0,3),
+('David','Ackerland','1995-12-30','Belgium',null,1,7),
+('Maria','Fockel','2000-09-28','France','Rosewalk',1,5),
+('Anna','Larston','1959-03-31','Dennmark',null,0,8);
+
+insert into recordcompany values
+(null,'StarRecords','St. Birkins','424536546', 'starrrecords@gmail.com','1970-12-02',null),
+(null,'PanikRecords','Vouliagmenis 77','2108943935','info@panikrecords.gr','2011-09-28',null),
+(null,'Sony Music Entertainment','Mesogeion 311','2106722150','reception.enquiries@sonymusic.gr','1929-09-09',null),
+(null,'SoundWave Records','123 Melody Lane','3105551234','info@soundwave.com','1995-06-15',null),
+(null,'Harmony Studios','456 Rhythm Ave','6155555678','contact@harmonystudios.com','1987-03-10',null);
+
+insert into producer values
+(null,'Sophia', 'Taylor', 10),
+(null,'Liam', 'Walker', 35),
+(null,'Isabella', 'Clark', 16),
+(null,'Ethan', 'Allen', 21),
+(null,'Mia', 'Hernandez', 14),
+(null,'Noah', 'White', 40);
+
+insert into band values
+(null,'Neon Horizon', '2012-05-14',null,3),
+(null,'Twilight Rhythm', '1985-09-20',null,8),
+(null,'Echoes of Eternity', '2007-02-28',null,9);
+
+insert into bandmember values
+(3,3,'2015-05-14',null),
+(1,4,'2018-08-17',null),
+(2,7,'2007-02-28',null),
+(2,4,'1985-09-20',null);
+
+insert into genre values
+(null,'rock'),
+(null,'jazz'),
+(null,'pop'),
+(null,'metal'),
+(null,'rock'),
+(null,'pop');
+
+
+insert into artistcompany values
+(1,1,"1990-04-23",null),
+(2,1,"2000-03-14",null),
+(3,3,"1999-11-30",null),
+(7,4,"2010-08-10",null),
+(8,5,"2015-12-01",null),
+(9,2,"2016-03-09",null),
+(1,4,"1998-12-08",null),
+(2,3,"2022-01-23",null),
+(7,2,"2004-07-17",null),
+(8,4,"2017-04-18",null),
+(9,5,"2019-02-20",null);
+
+insert into producercompany values
+(1,5,'1987-03-10',null),
+(2,4,'1995-06-15',null),
+(3,3,'1929-09-09',null),
+(4,2,'2011-09-28',null),
+(5,1,'1970-12-02',null),
+(3,2,'1938-04-13',null),
+(1,4,'2000-01-19',null),
+(2,1,'2010-11-30',null);
+
+insert into album values
+(null,'Days Together',1,3,1,1),
+(null,'Generations',2,5,4,2),
+(null,'In the Sun',3,2,5,3),
+(null,'Better Together',7,6,3,5),
+(null,'Wanderlust Chronicles',8,1,4,3),
+(null,'Over the Years',1,2,3,4),
+(null,'This is us',8,6,2,6),
+(null,'Smiling Ocean',9,6,1,2),
+(null,'Teen Pain',1,1,2,4),
+(null,'think about Promise',2,6,3,4);
+
+
+insert into track values
+(null,'All in Moon',1,'00:05:23',1,null),
+(null,'The Unbeat',1,'00:05:20',2,null),
+(null,'First Wave',1,'00:04:53',3,null),
+(null,'Imagine Scars',1,'00:04:00',4,null),
+(null,'Soft Horizon',1,'00:05:20',5,null), 
+(null,'The Passion',1,'00:04:28',6,null),
+(null,'Inspired Summer',1,'00:05:21',7,null),
+(null,'Running Out of Time',1,'00:05:22',8,null),
+(null,'Soul of Miles',2,'00:05:23',1,null),
+(null,'Catle of Secrets',2,'00:04:03',2,null),
+(null,'Cheery Lover',2,'00:05:40',3,null),
+(null,'A Time of Today',2,'00:03:43',4,null),
+(null,'Hot Touch',2,'00:04:50',5,null),
+(null,'Sky of Blue',2,'00:05:32',6,null),
+(null,'Foul Soul',2,'00:04:18',7,null),
+(null,'Earning Break',2,'00:03:57',8,null),
+(null,'Story of my Life',3,'00:05:15',1,null),
+(null,'Dreamy Future',3,'00:03:50',2,null),
+(null,'Break of Dawn',3,'00:04:13',3,null),
+(null,'Hold the Line',3,'00:05:33',4,null),
+(null,'Late Club',3,'00:02:59',5,null),
+(null,'Stairway to Heaven',3,'00:04:10',6,null), 
+(null,'Thank you',3,'00:03:57',7,null),
+(null,'Tortured Soul',3,'00:05:27',8,null), 
+(null,'Light Breeze',3,'00:03:45',9,null);                
+
+    
+insert into albumrelease values
+(null,1,'2000-03-13','CD','OFFICIAL','BOOK'),
+(null,2,'2005-01-23','MP3','PROMOTION','CARDBOARD SLEEVE'),
+(null,3,'2013-07-30','LP','OFFICIAL','BOOK'),
+(null,1,'2016-03-31','CD','PROMOTION','BOOK'),
+(null,2,'1998-03-13','MP3','BOOTLEG','NA'),
+(null,3,'1996-11-25','CD','WITHDRAWN','DIGIPACK'),
+(null,1,'2004-07-17','LP','CANCELED','BOOK'),
+(null,2,'1980-03-23','CD','OFFICIAL','BOOK'),
+(null,3,'2014-05-13','MP3','OFFICIAL','NA'),
+(null,1,'1997-02-25','LP','PROMOTION','CARDBOARD SLEEVE'),
+(null,2,'2019-01-29','MP3','OFFICIAL','BOOK'),
+(null,1,'2001-01-31','CD','BOOTLEG','NA');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3.1.2.1.
+
+
+create table consert(
+ConsertID int(11) not null auto_increment,
+status Enum('Scheduled','Completed','Cancelled') default 'scheduled',
+ConsertDate date,
+ArtistID int(11) not null,
+VenueID int(11) not null,
+req_capacity int not null,
+primary key(ConsertID),
+constraint ArtisthasConcert
+foreign key(ArtistID) references artist(ArtistID)
+on delete cascade on update cascade,
+constraint Takesplace
+foreign key(VenueID) references venue(VenueID)
+on delete cascade on update cascade
+);
+
+create table venue(
+VenueID int(11) not null auto_increment,
+IsFree Boolean not null,
+Capacity int not null,
+CompletedConserts int not null,
+FromDate date,
+primary key(VenueID)
+
+);
+
+
+
+
+drop trigger if exists CheckConsertdata;  ✔
+delimiter $
+
+create trigger CheckConserDate before insert on consert
+for each row
+begin
+
+if new.ConsertDate < DATE_ADD(CURDATE(), INTERVAL 5 DAY) then 
+SIGNAL SQLSTATE '45000' 
+SET MESSAGE_TEXT = ' Consert must be scheduled at least 5 days before the concert ';
+end if;
+
+
+if (select count(*) from consert where status = 'Scheduled'and ArtistID = new.ArtistID) >=3 then
+SIGNAL SQLSTATE '45000' 
+SET MESSAGE_TEXT = ' Artist can have at most 3 scheduled conserts ';
+
+end if;
+
+END $
+
+
+DELIMITER ;
+
+
+
+
+drop trigger if exists CheckCancellation; ✔
+delimiter $
+
+create trigger CheckCancellation before update on consert
+for each row
+begin
+
+
+if (select count(*) from consert where new.status = 'Scheduled' and old.status='Cancelled' and ArtistID = new.ArtistID) >=3 then
+SIGNAL SQLSTATE '45000' 
+SET MESSAGE_TEXT = ' Artist can have at most 3 scheduled conserts ';
+end if;
+
+if  new.status='Cancelled' and old.status = 'Scheduled' and new.ConsertDate < DATE_ADD(CURDATE(), INTERVAL 3 DAY)
+then 
+SIGNAL SQLSTATE '45000' 
+SET MESSAGE_TEXT = 'Consert cannot be cancelled';
+end if;
+END $
+DELIMITER ;
+
+
+
+
+
+
+
+
+
+3.1.3.1 ✔
+
+drop procedure if exists getscore;
+DELIMITER $
+
+CREATE PROCEDURE getscore(IN venID INT)
+BEGIN
+
+declare capacity int;
+declare result int;
+declare compl int;
+declare years_active int;
+set result =0;
+
+select venue.Capacity, venue.CompletedConserts, TIMESTAMPDIFF(YEAR, FromDate, CURDATE())
+into capacity, compl, years_active
+from venue where VenueID = venID;
+
+set result=(( capacity / 1000) * 1) + (( compl / 100)*3 ) + ( years_active*2);
+select result;
+END $
+
+DELIMITER ;
+
+
+
+
+
+
+
+
+
+
+
+3.1.3.2  ✔
+
+drop procedure if exists PlanConsert;
+DELIMITER $
+
+CREATE PROCEDURE PlanConsert(IN artistID INT, in Date date , in choice char)
+BEGIN
+
+
+
+if choice ='i' then
+
+if (select count(*) from consert where status = 'Scheduled' and consert.ArtistID = artistID) >=1 then
+SIGNAL SQLSTATE '45000' 
+SET MESSAGE_TEXT = ' Artist already has scheduled consert ';
+
+elseif (select count(*) from consert where status = 'Cancelled' and consert.ArtistID = artistID) >=1 then
+SIGNAL SQLSTATE '45000' 
+SET MESSAGE_TEXT = ' Artist already has cancelled consert ';
+
+else
+insert into consert(status, ConsertDate,ArtistID) values ('Scheduled',Date,artistID);
+select '  Consert scheduled ' as Message;
+end if;
+
+
+
+
+
+elseif choice ='c' then
+
+if (select count(*) from consert where status = 'Scheduled' and consert.ArtistID = artistID and consertDate = Date ) >=1 then
+update consert set status='Cancelled' where status = 'Scheduled' and consert.ArtistID = artistID and consertDate = Date; 
+select ' Consert cancelled ' as Message;
+
+elseif (select count(*) from consert where status = 'Cancelled' and consert.ArtistID = artistID and consertDate = Date ) >=1 then
+SIGNAL SQLSTATE '45000' 
+SET MESSAGE_TEXT = ' Consert already cancelled ';
+
+else 
+SIGNAL SQLSTATE '45000' 
+SET MESSAGE_TEXT = ' Scheduled consert does not exist ';
+end if;
+
+
+
+
+
+elseif choice ='a' then
+if (select count(*) from consert where status = 'Cancelled' and consert.ArtistID = artistID and consertDate = Date ) >=1 then 
+update consert set status='Scheduled' where status = 'Cancelled' and consert.ArtistID = artistID and consertDate = Date;
+select ' cancelled Consert set to scheduled  ' as Message;
+
+elseif (select count(*) from consert where status = 'Scheduled' and consert.ArtistID = artistID and consertDate = Date ) >=1 then 
+SIGNAL SQLSTATE '45000' 
+SET MESSAGE_TEXT = ' consert already scheduled  ';
+
+else 
+SIGNAL SQLSTATE '45000' 
+SET MESSAGE_TEXT = ' Cancelled consert does not exist ';
+end if;
+
+
+end if;
+END $
+
+DELIMITER ;
+
+
+
+
+
+
+
+3.1.3.3.
+
+
+drop procedure if exists GetVenueData;
+DELIMITER $
+
+CREATE PROCEDURE GetVenueData(IN conID INT, in req_cap int, out ven_id int, out ven_cap int)
+BEGIN
+
+if ((select count(*) from consert where status = 'Cancelled' and consert.ConsertID = conID ) >= 1) or 
+((select count(*) from consert where status != 'Cancelled' and consert.ConsertID = conID ) < 1)
+ then 
+set ven_id = null;
+set ven_cap = 0;
+select ven_id as Venue_ID, ven_cap as Venue_Capacity;
+
+
+
+end if;
+
+END $
+
+DELIMITER ;
+
