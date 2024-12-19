@@ -567,3 +567,160 @@ BEGIN
     SELECT ven_id AS Venue_ID, ven_cap AS Venue_Capacity;
 END $
 DELIMITER ;
+
+
+
+
+
+3.1.3.4. 
+
+CREATE TABLE ConcertHistory (
+    concert_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    artist_name VARCHAR(255) NOT NULL,
+    venue_name VARCHAR(255) NOT NULL,
+    ticket_count INT NOT NULL,
+    concert_date DATE NOT NULL
+);
+
+
+INSERT INTO ConcertHistory (artist_name, tickets_sold, venue_name, concert_date)
+VALUES
+('Artist A', 2000, 'Venue X', '2024-01-01'),
+('Artist B', 3000, 'Venue Y', '2024-02-01'),
+('Artist C', 2500, 'Venue X', '2024-03-01'),
+('Artist D', 3500, 'Venue Z', '2024-04-01'),
+('Artist E', 1500, 'Venue Y', '2024-05-01');
+
+
+
+CREATE INDEX idx_tickets_count ON  ConcertHistory(ticket_count);
+
+
+CREATE INDEX idx_venue_name ON  ConcertHistory(venue_name);
+
+
+DELIMITER $
+DROP PROCEDURE IF EXISTS GetArtistsByTicketRange;
+CREATE PROCEDURE GetArtistsByTicketRange(IN min_tickets INT, IN max_tickets INT)
+BEGIN
+    SELECT DISTINCT artist_name
+    FROM  ConcertHistory
+    WHERE ticket_count BETWEEN min_tickets AND max_tickets;
+END$
+
+DELIMITER ;
+
+
+//για να τρεξει το procedure και το index
+SET profiling = 1;
+
+CALL GetArtistsByTicketRange(2000, 3000);
+
+SHOW PROFILE FOR QUERY 1;
+
+SET profiling = 0;
+//για να τρεξει το procedure και το index
+
+
+DELIMITER $
+DROP PROCEDURE IF EXISTS GetConcertDatesByVenue;
+CREATE PROCEDURE GetConcertDatesByVenue(IN venue VARCHAR(255))
+BEGIN
+    SELECT concert_date
+    FROM  ConcertHistory
+    WHERE venue_name = venue;
+END$
+
+DELIMITER ;
+
+//για να τρεξει το procedure και το index
+SET profiling = 1;
+
+CALL GetConcertDatesByVenue('Venue X');
+
+SHOW PROFILE FOR QUERY 1;
+
+SET profiling = 0;
+//για να τρεξει το procedure και το index
+
+
+3.1.2.3.
+DELIMITER $
+
+CREATE PROCEDURE PopulateConcertHistory()
+BEGIN
+    DECLARE i INT DEFAULT 1;
+    WHILE i <= 60000 DO
+        INSERT INTO ConcertHistory (artist_name, venue_name, ticket_count, concert_date)
+        VALUES (
+            CONCAT('Artist ', i % 100),           
+            CONCAT('Venue ', i % 50),           
+            FLOOR(1000 + RAND() * 9000),         
+            DATE_ADD('2020-01-01', INTERVAL i DAY) 
+        );
+        SET i = i + 1;
+    END WHILE;
+END$
+
+DELIMITER ;
+
+
+3.1.2.4
+CREATE TABLE DBA (
+    DBA_ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NULL
+);
+
+
+CREATE TABLE DBALog (
+    log_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    DBA_ID INT NOT NULL,
+    action_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    action_description VARCHAR(255),
+    FOREIGN KEY (DBA_ID) REFERENCES DBA(DBA_ID)
+);
+
+
+
+DROP TRIGGER IF EXISTS LogDBAAction;  
+DELIMITER $
+
+CREATE TRIGGER LogDBAAction
+AFTER INSERT ON DBA
+FOR EACH ROW
+BEGIN
+    -- Καταγραφή της ενέργειας όταν προστίθεται νέος DBA
+    INSERT INTO DBALog (DBA_ID, action_description) 
+    VALUES (NEW.DBA_ID, CONCAT('DBA ', NEW.name, ' started on ', NEW.start_date));
+END $
+
+DELIMITER ;
+
+ 
+
+DROP TRIGGER IF EXISTS LogDBAEndDate;  
+DELIMITER $
+
+CREATE TRIGGER LogDBAEndDate
+AFTER UPDATE ON DBA
+FOR EACH ROW
+BEGIN
+    IF OLD.end_date IS NULL AND NEW.end_date IS NOT NULL THEN
+        -- Καταγραφή της αποχώρησης του DBA
+        INSERT INTO DBALog (DBA_ID, action_description) 
+        VALUES (NEW.DBA_ID, CONCAT('DBA ', NEW.name, ' left on ', NEW.end_date));
+    END IF;
+END $
+
+DELIMITER ;
+
+
+INSERT INTO DBA (name, start_date) VALUES 
+('John Doe', '2023-01-01'),
+('Jane Smith', '2023-03-15'),
+('Alice Johnson', '2023-06-01');
+
+
+
