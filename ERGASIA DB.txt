@@ -583,14 +583,6 @@ CREATE TABLE ConcertHistory (
 );
 
 
-INSERT INTO ConcertHistory (artist_name, tickets_sold, venue_name, concert_date)
-VALUES
-('Artist A', 2000, 'Venue X', '2024-01-01'),
-('Artist B', 3000, 'Venue Y', '2024-02-01'),
-('Artist C', 2500, 'Venue X', '2024-03-01'),
-('Artist D', 3500, 'Venue Z', '2024-04-01'),
-('Artist E', 1500, 'Venue Y', '2024-05-01');
-
 
 
 CREATE INDEX idx_tickets_count ON  ConcertHistory(ticket_count);
@@ -645,6 +637,7 @@ SET profiling = 0;
 
 
 3.1.2.3.
+
 DELIMITER $
 
 CREATE PROCEDURE PopulateConcertHistory()
@@ -663,6 +656,7 @@ BEGIN
 END$
 
 DELIMITER ;
+
 
 
 3.1.2.4
