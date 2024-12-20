@@ -317,7 +317,7 @@ ConsertDate date,
 ArtistID int(11) not null,
 VenueID int(11) not null,
 primary key(ConsertID),
-constraint ArtisthasConcert
+constraint Artisthasconsert
 foreign key(ArtistID) references artist(ArtistID)
 on delete cascade on update cascade,
 constraint Takesplace
@@ -328,7 +328,6 @@ on delete cascade on update cascade
 create table venue(
 VenueID int(11) not null auto_increment,
 VenueName varchar not null,
-IsFree Boolean not null,
 Capacity int not null,
 CompletedConserts int not null,
 FromDate date,
@@ -458,7 +457,7 @@ BEGIN
     DECLARE foundVenues CURSOR FOR 
         SELECT venue.VenueID, venue.Capacity
         FROM venue
-        WHERE venue.Capacity >= req_cap * 1.10 AND venue.IsFree = TRUE;
+        WHERE venue.Capacity >= req_cap * 1.10;
 
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
 
@@ -522,18 +521,18 @@ DELIMITER ;
 
 3.1.3.4. 
 
-CREATE TABLE ConcertHistory (
-    concert_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE consertHistory (
+    consert_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     artist_name VARCHAR(255) NOT NULL,
     venue_name VARCHAR(255) NOT NULL,
     ticket_count INT NOT NULL,
-    concert_date DATE NOT NULL
+    consert_date DATE NOT NULL
 );
 
-CREATE INDEX idx_tickets_count ON  ConcertHistory(ticket_count);
+CREATE INDEX idx_tickets_count ON  consertHistory(ticket_count);
 
 
-CREATE INDEX idx_venue_name ON  ConcertHistory(venue_name);
+CREATE INDEX idx_venue_name ON  consertHistory(venue_name);
 
 
 
@@ -543,7 +542,7 @@ DROP PROCEDURE IF EXISTS GetArtistsByTicketRange;
 CREATE PROCEDURE GetArtistsByTicketRange(IN min_tickets INT, IN max_tickets INT)
 BEGIN
     SELECT DISTINCT artist_name
-    FROM  ConcertHistory
+    FROM  consertHistory
     WHERE ticket_count BETWEEN min_tickets AND max_tickets;
 END$
 
@@ -566,11 +565,11 @@ SET profiling = 0;
 
 
 DELIMITER $
-DROP PROCEDURE IF EXISTS GetConcertDatesByVenue;
-CREATE PROCEDURE GetConcertDatesByVenue(IN venue VARCHAR(255))
+DROP PROCEDURE IF EXISTS GetconsertDatesByVenue;
+CREATE PROCEDURE GetconsertDatesByVenue(IN venue VARCHAR(255))
 BEGIN
-    SELECT concert_date
-    FROM  ConcertHistory
+    SELECT consert_date
+    FROM  consertHistory
     WHERE venue_name = venue;
 END$
 
@@ -579,7 +578,7 @@ DELIMITER ;
 //για να τρεξει το procedure και το index
 SET profiling = 1;
 
-CALL GetConcertDatesByVenue('Venue X');
+CALL GetconsertDatesByVenue('Venue 4');
 
 SHOW PROFILE FOR QUERY 1;
 
@@ -595,11 +594,11 @@ SET profiling = 0;
 
 DELIMITER $
 
-CREATE PROCEDURE PopulateConcertHistory()
+CREATE PROCEDURE PopulateconsertHistory()
 BEGIN
     DECLARE i INT DEFAULT 1;
     WHILE i <= 60000 DO
-        INSERT INTO ConcertHistory (artist_name, venue_name, ticket_count, concert_date)
+        INSERT INTO consertHistory (artist_name, venue_name, ticket_count, consert_date)
         VALUES (
             CONCAT('Artist ', i % 100),           
             CONCAT('Venue ', i % 50),           
@@ -632,8 +631,8 @@ CREATE TABLE DBALog (
 );
 
 
-
-DROP TRIGGER IF EXISTS LogDBAAction;  ✔
+✔
+DROP TRIGGER IF EXISTS LogDBAAction;  
 DELIMITER $
 
 CREATE TRIGGER LogDBAAction
@@ -648,8 +647,8 @@ END $
 DELIMITER ;
 
  
-
-DROP TRIGGER IF EXISTS LogDBAEndDate;  ✔
+✔
+DROP TRIGGER IF EXISTS LogDBAEndDate;  
 DELIMITER $
 
 CREATE TRIGGER LogDBAEndDate
@@ -697,7 +696,7 @@ END$
 DELIMITER ;
 
 
-✔
+
 DROP TRIGGER IF EXISTS person_update;
 DELIMITER $
 CREATE TRIGGER person_update AFTER UPDATE ON person
@@ -710,7 +709,7 @@ DELIMITER ;
 
 
 
-✔
+
 DROP TRIGGER IF EXISTS person_delete;
 DELIMITER $
 CREATE TRIGGER person_delete AFTER DELETE ON person
@@ -723,7 +722,7 @@ DELIMITER ;
  
 
 
-✔
+
 DROP TRIGGER IF EXISTS band_insert;
 DELIMITER $
 CREATE TRIGGER band_insert AFTER INSERT ON band
@@ -736,7 +735,7 @@ DELIMITER ;
 
 
 
-✔
+
 DROP TRIGGER IF EXISTS band_update;
 DELIMITER $
 CREATE TRIGGER band_update AFTER UPDATE ON band
@@ -749,7 +748,7 @@ DELIMITER ;
 
 
 
-✔
+
 DROP TRIGGER IF EXISTS band_delete;
 DELIMITER $
 CREATE TRIGGER band_delete AFTER DELETE ON band
@@ -761,7 +760,7 @@ END$
 DELIMITER ;
 
 
-✔
+
 DROP TRIGGER IF EXISTS album_insert;
 DELIMITER $
 CREATE TRIGGER album_insert AFTER INSERT ON album
@@ -773,7 +772,7 @@ END$
 DELIMITER ;
 
 
-✔
+
 DROP TRIGGER IF EXISTS album_update;
 DELIMITER $
 CREATE TRIGGER album_update AFTER UPDATE ON album
@@ -785,7 +784,7 @@ END$
 DELIMITER ;
 
 
-✔
+
 DROP TRIGGER IF EXISTS album_delete;
 DELIMITER $
 CREATE TRIGGER album_delete AFTER DELETE ON album
@@ -798,44 +797,43 @@ DELIMITER ;
 
 
 
-✔
-DROP TRIGGER IF EXISTS concert_insert;
+
+DROP TRIGGER IF EXISTS consert_insert;
 DELIMITER $
-CREATE TRIGGER concert_insert AFTER INSERT ON consert
+CREATE TRIGGER consert_insert AFTER INSERT ON consert
 FOR EACH ROW
 BEGIN
     INSERT INTO action_log (action_type, table_name, action_timestamp, username)
-    VALUES ('INSERT', 'concert', NOW(), USER());
-END$
-DELIMITER ;
-
-
-✔
-DROP TRIGGER IF EXISTS concert_update;
-DELIMITER $
-CREATE TRIGGER concert_update AFTER UPDATE ON consert
-FOR EACH ROW
-BEGIN
-    INSERT INTO action_log (action_type, table_name, action_timestamp, username)
-    VALUES ('UPDATE', 'concert', NOW(), USER());
-END$
-DELIMITER ;
-
-
-✔
-DROP TRIGGER IF EXISTS concert_delete;
-DELIMITER $
-CREATE TRIGGER concert_delete AFTER DELETE ON consert
-FOR EACH ROW
-BEGIN
-    INSERT INTO action_log (action_type, table_name, action_timestamp, username)
-    VALUES ('DELETE', 'concert', NOW(), USER());
+    VALUES ('INSERT', 'consert', NOW(), USER());
 END$
 DELIMITER ;
 
 
 
-✔
+DROP TRIGGER IF EXISTS consert_update;
+DELIMITER $
+CREATE TRIGGER consert_update AFTER UPDATE ON consert
+FOR EACH ROW
+BEGIN
+    INSERT INTO action_log (action_type, table_name, action_timestamp, username)
+    VALUES ('UPDATE', 'consert', NOW(), USER());
+END$
+DELIMITER ;
+
+
+DROP TRIGGER IF EXISTS consert_delete;
+DELIMITER $
+CREATE TRIGGER consert_delete AFTER DELETE ON consert
+FOR EACH ROW
+BEGIN
+    INSERT INTO action_log (action_type, table_name, action_timestamp, username)
+    VALUES ('DELETE', 'consert', NOW(), USER());
+END$
+DELIMITER ;
+
+
+
+
 DROP TRIGGER IF EXISTS venue_insert;
 DELIMITER $
 CREATE TRIGGER venue_insert AFTER INSERT ON venue
@@ -847,7 +845,7 @@ END$
 DELIMITER ;
 
 
-✔
+
 DROP TRIGGER IF EXISTS venue_update;
 DELIMITER $
 CREATE TRIGGER venue_update AFTER UPDATE ON venue
@@ -859,7 +857,7 @@ END$
 DELIMITER ;
 
 
-✔
+
 DROP TRIGGER IF EXISTS venue_delete;
 DELIMITER $
 CREATE TRIGGER venue_delete AFTER DELETE ON venue
@@ -873,7 +871,7 @@ DELIMITER ;
 
 
 
-✔
+
 DROP TRIGGER IF EXISTS CheckConsertdata;  
 DELIMITER $
 
@@ -883,7 +881,7 @@ BEGIN
 
     IF new.ConsertDate < DATE_ADD(CURDATE(), INTERVAL 5 DAY) THEN 
         SIGNAL SQLSTATE '45000' 
-        SET MESSAGE_TEXT = 'Consert must be scheduled at least 5 days before the concert';
+        SET MESSAGE_TEXT = 'Consert must be scheduled at least 5 days before the consert';
     END IF;
 
     IF (SELECT COUNT(*) FROM consert WHERE status = 'Scheduled' AND ArtistID = new.ArtistID) >= 3 THEN
@@ -897,7 +895,7 @@ DELIMITER ;
 
 
 
-✔
+
 DROP TRIGGER IF EXISTS CheckCancellation; 
 DELIMITER $
 
