@@ -914,10 +914,20 @@ BEGIN
     END IF;
 
 END $
-
 DELIMITER ;
 
 
+DROP TRIGGER IF EXISTS ReleaseVenueOnCompletion;
+DELIMITER $
+CREATE TRIGGER ReleaseVenueOnCompletion
+BEFORE UPDATE ON consert
+FOR EACH ROW
+BEGIN
+    IF NEW.status = 'Completed' AND OLD.status != 'Completed' THEN
+        SET NEW.VenueID = NULL;
+    END IF;
+END$
+DELIMITER ;
 
 
 
