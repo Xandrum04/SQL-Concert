@@ -2,9 +2,9 @@ package com.mycompany.gui;
 import java.sql.*;
 
 public class PROJECT {
-private static final String DB_URL = "jdbc:mariadb://localhost:3307/sigma";
-private static final String DB_USER = "root";
-private static final String DB_PASSWORD = "";
+public static final String DB_URL = "jdbc:mysql://localhost:3306/recordcompany";
+public static final String DB_USER = "root";
+public static final String DB_PASSWORD = "";
 
     public static void main(String[] args) {
         

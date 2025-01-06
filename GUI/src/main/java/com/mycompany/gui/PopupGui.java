@@ -41,6 +41,7 @@ public class PopupGui extends javax.swing.JFrame {
         jScrollPane2.setViewportView(jTextArea2);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setResizable(false);
 
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
@@ -83,10 +84,11 @@ public class PopupGui extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(jLabel1)
-                .addGap(3, 3, 3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(39, 39, 39)
+                .addGap(30, 30, 30)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(35, 35, 35)
                 .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -112,7 +114,7 @@ public class PopupGui extends javax.swing.JFrame {
                             jLabel2.setText("Error:Incorrect table");
                         }
                     } else {
-                        jLabel2.setText("Invalid command for action: insert");
+                        jLabel2.setText("Error:Invalid command for action: insert");
                     }
                     break;
                 case "update":
@@ -123,7 +125,7 @@ public class PopupGui extends javax.swing.JFrame {
                             jLabel2.setText("Error:Incorrect table");
                         }
                     } else {
-                        jLabel2.setText("Invalid command for action: update");
+                        jLabel2.setText("Error:Invalid command for action: update");
                     }
                     break;
                 case "delete":
@@ -134,11 +136,11 @@ public class PopupGui extends javax.swing.JFrame {
                             jLabel2.setText("Error:Incorrect table");
                         }
                     } else {
-                        jLabel2.setText("Invalid command for action: delete");
+                        jLabel2.setText("Error:Invalid command for action: delete");
                     }
                     break;
                 default:
-                    jLabel2.setText("Invalid action specified.");
+                    jLabel2.setText("Error:Invalid action specified.");
                     break;
             }
         } catch (Exception e) {
@@ -184,7 +186,7 @@ public class PopupGui extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
+    public javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
