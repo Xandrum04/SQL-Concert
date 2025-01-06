@@ -10,7 +10,8 @@ package com.mycompany.gui;
  * @author smant
  */
 public class GUI extends javax.swing.JFrame {
- public static String tableName;
+ public static String tableName=null;
+ public static String action;
     /**
      * Creates new form GUI
      */
@@ -27,6 +28,8 @@ public class GUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        Popup = new javax.swing.JFrame();
+        jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
@@ -49,9 +52,30 @@ public class GUI extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTextArea2 = new javax.swing.JTextArea();
-        runsqlbutton = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextAreaInput = new javax.swing.JTextArea();
+        jMenuBar2 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        jMenuItem10 = new javax.swing.JMenuItem();
+        jMenuItem56 = new javax.swing.JMenuItem();
+        jMenuItem57 = new javax.swing.JMenuItem();
+
+        jLabel2.setText("Smegma Chigga");
+
+        javax.swing.GroupLayout PopupLayout = new javax.swing.GroupLayout(Popup.getContentPane());
+        Popup.getContentPane().setLayout(PopupLayout);
+        PopupLayout.setHorizontalGroup(
+            PopupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PopupLayout.createSequentialGroup()
+                .addGap(266, 266, 266)
+                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)
+                .addGap(328, 328, 328))
+        );
+        PopupLayout.setVerticalGroup(
+            PopupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PopupLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(428, 428, 428))
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(204, 204, 255));
@@ -202,17 +226,40 @@ public class GUI extends javax.swing.JFrame {
         jTextArea2.setAlignmentY(0.0F);
         jScrollPane3.setViewportView(jTextArea2);
 
-        runsqlbutton.setText("Run");
-        runsqlbutton.setAlignmentY(0.0F);
-        runsqlbutton.addActionListener(new java.awt.event.ActionListener() {
+        jMenu1.setText("Action");
+        jMenu1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                runsqlbuttonActionPerformed(evt);
+                jMenu1ActionPerformed(evt);
             }
         });
 
-        jTextAreaInput.setColumns(20);
-        jTextAreaInput.setRows(5);
-        jScrollPane1.setViewportView(jTextAreaInput);
+        jMenuItem10.setText("Insert");
+        jMenuItem10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem10ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem10);
+
+        jMenuItem56.setText("Update");
+        jMenuItem56.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem56ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem56);
+
+        jMenuItem57.setText("Delete");
+        jMenuItem57.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem57ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem57);
+
+        jMenuBar2.add(jMenu1);
+
+        setJMenuBar(jMenuBar2);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -264,15 +311,9 @@ public class GUI extends javax.swing.JFrame {
                                 .addGap(14, 14, 14)
                                 .addComponent(jButton2))))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 13, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 650, Short.MAX_VALUE)
-                            .addComponent(jScrollPane1))))
-                .addContainerGap(13, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(286, 286, 286)
-                .addComponent(runsqlbutton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 18, Short.MAX_VALUE)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 650, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(19, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -306,11 +347,7 @@ public class GUI extends javax.swing.JFrame {
                     .addComponent(jButton2))
                 .addGap(17, 17, 17)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(7, 7, 7)
-                .addComponent(runsqlbutton)
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -497,42 +534,34 @@ public class GUI extends javax.swing.JFrame {
         
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    private void runsqlbuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runsqlbuttonActionPerformed
-        String input = jTextAreaInput.getText();
+    private void jMenu1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu1ActionPerformed
 
-    // Split the input into words
-    String[] words = input.trim().split("\\s+");
-
-    if (words.length > 0) {
-        // Check the first word and call the appropriate method
-        String command = words[0].toLowerCase(); // to handle case-insensitivity
-
-        try {
-            switch (command) {
-                case "insert":
-                 
-                    PROJECT.InsertData(input);
-                    break;
-
-                case "delete":
-                  
-                    PROJECT.DeleteData(input);
-                    break;
-
-                case "update":
-                   
-                    PROJECT.UpdateData(input);
-                    break;
-
-                default:
-                    System.out.println("Invalid command");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    }//GEN-LAST:event_runsqlbuttonActionPerformed
-
+    }//GEN-LAST:event_jMenu1ActionPerformed
+    
+    
+    private void jMenuItem56ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem56ActionPerformed
+        PopupGui p2 = new PopupGui();
+    if (tableName==null){
+        jTextArea2.setText("Select a table");
+    }//GEN-LAST:event_jMenuItem56ActionPerformed
+    else {p2.setVisible(true);} action="update";}
+    
+    
+    
+    private void jMenuItem57ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem57ActionPerformed
+       PopupGui p2 = new PopupGui();
+    if (tableName==null){
+        jTextArea2.setText("Select a table");
+    }//GEN-LAST:event_jMenuItem57ActionPerformed
+    else {p2.setVisible(true);} action="delete";}
+    
+    private void jMenuItem10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem10ActionPerformed
+         PopupGui p2 = new PopupGui();
+    if (tableName==null){
+        jTextArea2.setText("Select a table");
+    }//GEN-LAST:event_jMenuItem10ActionPerformed
+ else {p2.setVisible(true);} action="insert";}
+ 
     /**
      * @param args the command line arguments
      */
@@ -569,6 +598,7 @@ public class GUI extends javax.swing.JFrame {
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JFrame Popup;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton11;
@@ -588,11 +618,14 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenuBar jMenuBar2;
+    private javax.swing.JMenuItem jMenuItem10;
+    private javax.swing.JMenuItem jMenuItem56;
+    private javax.swing.JMenuItem jMenuItem57;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
     public static javax.swing.JTextArea jTextArea2;
-    private javax.swing.JTextArea jTextAreaInput;
-    private javax.swing.JButton runsqlbutton;
     // End of variables declaration//GEN-END:variables
 }
