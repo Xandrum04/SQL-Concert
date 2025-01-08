@@ -6,9 +6,8 @@ package com.mycompany.gui;
 import java.util.Objects;
 import static com.mycompany.gui.GUI.action;
 import static com.mycompany.gui.GUI.tableName;
-import java.io.File;
-
 /**
+ *
  * @author User
  */
 public class PopupGui extends javax.swing.JFrame {
@@ -36,7 +35,6 @@ public class PopupGui extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
 
         jTextArea2.setColumns(20);
         jTextArea2.setRows(5);
@@ -72,21 +70,16 @@ public class PopupGui extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jScrollPane1)
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(172, 172, 172)
+                .addComponent(jLabel1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(132, 132, 132)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE))
                 .addGap(150, 150, 150))
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(172, 172, 172)
-                        .addComponent(jLabel1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 756, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -95,9 +88,7 @@ public class PopupGui extends javax.swing.JFrame {
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 646, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(30, 30, 30)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(35, 35, 35)
                 .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -110,7 +101,7 @@ public class PopupGui extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
      String input = jTextArea1.getText();
     String[] words = input.trim().split("\\s+");
-    File imgFile = new File("C:/Users/User/Documents/GitHub/SQL-Concert/GUI/src/main/java/com/mycompany/gui/maxresdefault.jpg");
+
     if (words.length > 0) {
         String command = words[0].toLowerCase();
         try {
@@ -121,11 +112,9 @@ public class PopupGui extends javax.swing.JFrame {
                             PROJECT.InsertData(input);
                         } else {
                             jLabel2.setText("Error:Incorrect table");
-                             jLabel3.setIcon(new javax.swing.ImageIcon(imgFile.getAbsolutePath()));
                         }
                     } else {
                         jLabel2.setText("Error:Invalid command for action: insert");
-                        jLabel3.setIcon(new javax.swing.ImageIcon(imgFile.getAbsolutePath()));
                     }
                     break;
                 case "update":
@@ -134,11 +123,9 @@ public class PopupGui extends javax.swing.JFrame {
                             PROJECT.UpdateData(input); // Assuming UpdateData exists
                         } else {
                             jLabel2.setText("Error:Incorrect table");
-                            jLabel3.setIcon(new javax.swing.ImageIcon(imgFile.getAbsolutePath()));
                         }
                     } else {
                         jLabel2.setText("Error:Invalid command for action: update");
-                        jLabel3.setIcon(new javax.swing.ImageIcon(imgFile.getAbsolutePath()));
                     }
                     break;
                 case "delete":
@@ -147,16 +134,13 @@ public class PopupGui extends javax.swing.JFrame {
                             PROJECT.DeleteData(input); // Assuming DeleteData exists
                         } else {
                             jLabel2.setText("Error:Incorrect table");
-                            jLabel3.setIcon(new javax.swing.ImageIcon(imgFile.getAbsolutePath()));
                         }
                     } else {
                         jLabel2.setText("Error:Invalid command for action: delete");
-                        jLabel3.setIcon(new javax.swing.ImageIcon(imgFile.getAbsolutePath()));
                     }
                     break;
                 default:
                     jLabel2.setText("Error:Invalid action specified.");
-                    jLabel3.setIcon(new javax.swing.ImageIcon(imgFile.getAbsolutePath()));
                     break;
             }
         } catch (Exception e) {
@@ -204,7 +188,6 @@ public class PopupGui extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     public javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextArea jTextArea1;
