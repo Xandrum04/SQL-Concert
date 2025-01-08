@@ -593,7 +593,7 @@ SET profiling = 0;
 3.1.2.3. ✔
 
 DELIMITER $
-
+DROP PROCEDURE IF EXISTS PopulateconsertHistory;
 CREATE PROCEDURE PopulateconsertHistory()
 BEGIN
     DECLARE i INT DEFAULT 1;
